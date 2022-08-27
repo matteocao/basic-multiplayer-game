@@ -29,3 +29,7 @@ python main.py
 ```
 
 Ideally, you would deploy the server (and run the command `python server.py` from a place that two clients, on two different computers, can reach.
+
+## Testing
+
+TBA
