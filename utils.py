@@ -100,7 +100,11 @@ WINNER_FONT = pygame.font.SysFont("comicsans", 90)
 
 # background data
 WIDTH, HEIGHT = 900, 500
-WIN = pygame.display.set_mode((WIDTH, HEIGHT))  # window of the game
+try:
+    WIN = pygame.display.set_mode((WIDTH, HEIGHT))  # window of the game
+except: # no video device avaialble on server
+    pass
+
 BORDER = pygame.Rect(WIDTH/2-5, 0, 10, HEIGHT)  # middle barrier
 SPACE = pygame.transform.scale(pygame.image.load(os.path.join("Assets","space.png")),(WIDTH, HEIGHT))
 
