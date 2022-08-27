@@ -2,9 +2,11 @@ import pygame
 import os
 from typing import List, Tuple
 
-
-pygame.font.init()  # initialise fonts
-pygame.mixer.init()  # init sound
+try:
+    pygame.font.init()  # initialise fonts
+    pygame.mixer.init()  # init sound
+except:  # in case no audio devices
+    pass
 
 class Bullet:
 
