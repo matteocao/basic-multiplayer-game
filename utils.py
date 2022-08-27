@@ -7,6 +7,7 @@ try:
     pygame.font.init()  # initialise fonts
     pygame.mixer.init()  # init sound
 except:  # in case no audio devices
+    os.environ['SDL_AUDIODRIVER'] = 'dsp'
     pass
 
 class Bullet:
