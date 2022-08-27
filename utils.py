@@ -5,6 +5,9 @@ from typing import List, Tuple
 try:
     pygame.font.init()  # initialise fonts
     pygame.mixer.init()  # init sound
+    # sounds
+    BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Gun+Silencer.mp3"))
+    BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Grenade+1.mp3"))
 except:  # in case no audio devices
     pass
 
@@ -120,10 +123,6 @@ RED_SPACESHIP_IMAGE = pygame.image.load(os.path.join("Assets","spaceship_red.png
 SPACE_SHIP_SIZE = (55, 40)
 YELLOW_TRANSF_IMG = pygame.transform.rotate(pygame.transform.scale(YELLOW_SPACESHIP_IMAGE, SPACE_SHIP_SIZE), 90)
 RED_TRANSF_IMG = pygame.transform.rotate(pygame.transform.scale(RED_SPACESHIP_IMAGE, SPACE_SHIP_SIZE), -90)
-
-# sounds
-BULLET_FIRE_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Gun+Silencer.mp3"))
-BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Grenade+1.mp3"))
 
 def draw_window(players):
     """draw all objects"""
