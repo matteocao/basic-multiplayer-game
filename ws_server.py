@@ -69,7 +69,7 @@ async def loop_fn(conn):
                 clock.tick(FPS)
                 players[index] = await threaded_client(conn, gs, index)
                 gs.update(players)
-        except websockets.exceptions.ConnectionClosedOK:
+        except websockets.exceptions.ConnectionClosedOK:  # noqa
             thread_count -= 1
             print('Thread Number: ' + str(thread_count))
             re_initialisation()

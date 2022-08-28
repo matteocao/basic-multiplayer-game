@@ -64,6 +64,7 @@ async def main():
                 draw_winner(win_text)
                 break  # get out the game loop
             gs.update([player1, player2])
+
             await client_socket.send(pickle.dumps(gs))
 
         pygame.quit()
