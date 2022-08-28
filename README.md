@@ -19,17 +19,34 @@ Then, each client will constantly send information to the server about its inten
 Make sure you first run the server with
 
 ```
-python server.py
+python ws_server.py
 ```
 
 and then connect with at least two clients:
 
 ```
-python main.py
+python ws_main.py
 ```
 
-Ideally, you would deploy the server (and run the command `python server.py` from a place that two clients, on two different computers, can reach.
+Ideally, you would deploy the server (and run the command `python ws_server.py` from a place that two clients, on two different computers, can reach.
 
 ## Testing
 
 TBA
+
+## Deploy on Heroku
+
+To deploy on [Heroku](https://devcenter.heroku.com/articles/git), the first step is to create a new application from the web interface. Assume the app name is `example-app`, then
+
+```
+heroku git:remote -a example-app
+```
+
+Then, simply push to heroku:
+
+```
+git push heroku master
+```
+
+Try on heroku: change the `host` variable in the `ws_main.py` with the heroku URL of your app. Then, you should see the window popping up.
+
