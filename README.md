@@ -47,7 +47,7 @@ heroku git:remote -a example-app
 Then, simply push to Heroku to automatically start the deployment:
 
 ```
-git push heroku master
+git push heroku main
 ```
 
 You can try to play on Heroku after the server is deployed (and automatically executed as per the `Procfile`: change the `host` variable in the `ws_main.py` with the Heroku URL of your app. Afterwards, you should see the game window popping up.

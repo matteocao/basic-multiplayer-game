@@ -1,24 +1,20 @@
-import pygame
-import os
-from typing import List, Tuple
-import pickle
-from utils import *
-import socket
 import asyncio
-import websockets
+import pickle
 
+import websockets
+import pygame  # noqa
+
+from utils import *
 
 pygame.font.init()  # initialise fonts
 pygame.mixer.init()  # init sound
 
+
 async def main():
     """the main game loop function"""
-    # connect to server, basic-multiplayer-gam.herokuapp.com
+    # connect to my server, ws://basic-multiplayer-gam.herokuapp.com
     async with websockets.connect("ws://localhost:5555") as client_socket:
         print("Connected!")
-
-        #client_socket = socket.socket()  # instantiate
-        #client_socket.connect((host, port))  # connect to the server
 
         # initialisation
         win_text = ""
@@ -27,13 +23,13 @@ async def main():
         await client_socket.send("psw")
         while run:  # main loop
             clock.tick(FPS)
-            #print("in the loop")
-            gs = pickle.loads(await client_socket.recv())#1024*MULTIPL))# .decode())  # receive response
-            #print("got pickle")
-            await client_socket.send("got pickle")#.encode())
-            index = int(await client_socket.recv())#64).decode())
-            await client_socket.send("got index")#.encode())
-            #print("got index:" + str(index))
+            # print("in the loop")
+            gs = pickle.loads(await client_socket.recv())  # 1024*MULTIPL))# .decode())  # receive response
+            # print("got pickle")
+            await client_socket.send("got pickle")  # .encode())
+            index = int(await client_socket.recv())  # 64).decode())
+            await client_socket.send("got index")  # .encode())
+            # print("got index:" + str(index))
             player1, player2 = gs.get()
             player = gs.get()[index]
             color = COLORS[index]
@@ -44,8 +40,6 @@ async def main():
                 if event.type == pygame.KEYDOWN:  # this allows only one button at time to be pressed
                     if event.key == pygame.K_e:  # shooting
                         player.shoot(color)
-                    #elif event.key == pygame.K_m:  # shooting
-                    #    player2.shoot(RED)
 
                 if event.type == A_HIT:
                     print("hit!")
@@ -58,20 +52,22 @@ async def main():
             # movements
             keys_pressed = pygame.key.get_pressed()
             if index == 0:
-                player.move(keys_pressed, pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, (10, WIDTH//2-50), (10, HEIGHT-50))
+                player.move(keys_pressed, pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, (10, WIDTH // 2 - 50),
+                            (10, HEIGHT - 50))
             else:
-                player.move(keys_pressed, pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, (WIDTH // 2, WIDTH - 50), (10, HEIGHT - 50))
-            #player2.move(keys_pressed, pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN, (WIDTH//2, WIDTH-50), (10, HEIGHT-50))
+                player.move(keys_pressed, pygame.K_a, pygame.K_d, pygame.K_w, pygame.K_s, (WIDTH // 2, WIDTH - 50),
+                            (10, HEIGHT - 50))
+
             handle_bullets([player1, player2])
             draw_window([player1, player2])
             if win_text != "":
                 draw_winner(win_text)
-                break # get out the game loop
+                break  # get out the game loop
             gs.update([player1, player2])
             await client_socket.send(pickle.dumps(gs))
 
-        #client_socket.close()
         pygame.quit()
+
 
 if __name__ == "__main__":
     asyncio.run(main())
