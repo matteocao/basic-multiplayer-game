@@ -50,3 +50,6 @@ git push heroku master
 
 Try on heroku: change the `host` variable in the `ws_main.py` with the heroku URL of your app. Then, you should see the window popping up.
 
+### Check on my heroku
+
+My app is deployed at https://basic-multiplayer-gam.herokuapp.com/ . You can use this URL as value for `host` in the `ws_main.py`.
