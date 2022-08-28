@@ -55,3 +55,4 @@ You can try to play on Heroku after the server is deployed (and automatically ex
 ### Check on my Heroku
 
 My app is deployed at https://basic-multiplayer-gam.herokuapp.com/ . To activate it, go to the website first. Then, you can use the same URL as value for `host` in the `ws_main.py`.
+
