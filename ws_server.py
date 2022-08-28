@@ -2,6 +2,7 @@ import socket
 from utils import *
 import pygame
 import pickle
+import signal
 from _thread import *
 import os
 import websockets
@@ -96,9 +97,12 @@ async def server_program():
         port = int(os.environ.get('PORT', 17995))  # as per OP comments default is 17995
     else:
         port = 5555
-
-    async with websockets.serve(loop_fn, "localhost", port) as start_server:
-        await asyncio.Future()  # run forever
+    # Set the stop condition when receiving SIGTERM.
+    loop = asyncio.get_running_loop()
+    stop = loop.create_future()
+    loop.add_signal_handler(signal.SIGTERM, stop.set_result, None)
+    async with websockets.serve(loop_fn, "", port) as start_server:
+        await stop #asyncio.Future()  # run forever
     #server_socket = socket.socket()  # get instance
     # look closely. The bind() function takes tuple as argument
     #try:
