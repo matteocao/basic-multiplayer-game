@@ -16,6 +16,7 @@ The server will listen for new clients -- that must connect to the server via we
  
 Then, each client will constantly send information to the server about its intentions and the server will continuously update the game status (players' position, health, ...) and broadcast the status to all players.
 
+![plot](./images/dataflow.png)
 ## How to play (on your local PC or network)
 
 Make sure you first run the server with

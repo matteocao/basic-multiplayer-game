@@ -12,38 +12,66 @@ except:  # in case no audio devices  # noqa
     pass
 
 
+class DTOB:
+    """DTO for bullets"""
+    def __init__(self, color, obj, index, is_new: bool = False):
+        self.color = color
+        self.obj = obj
+        self.is_new = is_new
+        self.index = index
+
+
 class Bullet:
     """class handling the bullet"""
-    def __init__(self, color, obj, player):
+    def __init__(self, color, obj, player, index):
         self.color = color
         self.obj = obj
         self.player = player
+        self.index = index
+
+    def dumps(self) -> DTOB:
+        return DTOB(self.color, self.obj, self.index, True)
+
+    def loads(self, dtob):
+        self.color = dtob.color
+        self.obj = dtob.obj
+        self.index = dtob.index
+        return self
 
     def draw(self, win):
         pygame.draw.rect(win, self.color, self.obj)
 
-    def move(self, opponent, vel, x_allowed):
-        self.obj.x += vel
+    def move(self, vel, x_allowed, bullets, plyers):
+        # extend to "not the player player" if more players
+        x = [bullet.player for bullet in bullets]
+        opponent = plyers[(self.index + 1) % 2]  # .remove(self)
+        self.obj.x += -vel*(2*self.index - 1)
         if opponent.obj.colliderect(self.obj):
             pygame.event.post(pygame.event.Event(A_HIT))  # broadcasting the event, not really used here
+            #print("before", opponent.health)
             opponent.got_hit()
-            self.player.bullets.remove(self)
+            #print("after", opponent.health)
+            bullets.remove(self)
         elif not (x_allowed[0] <= self.obj.x <= x_allowed[1]):
-            self.player.bullets.remove(self)
+            bullets.remove(self)
+
+
+class DTO:
+    """data transfer object for one player"""
+    def __init__(self, health, obj):
+        self.health = health
+        self.obj = obj
 
 
 class Player:
     VEL_SPACESHIP = 5
-    MAX_BULLETS = 3
 
     def __init__(self, spaceship_img: str,
                  health: int,
-                 bullets: List[Bullet],
                  position: Tuple[int, int],
                  pos_health: Tuple[int, int]):
         self.spaceship_img = spaceship_img
         self.health = health
-        self.bullets = bullets
         self.obj = pygame.Rect(*position, *SPACE_SHIP_SIZE)
         self.pos_health = pos_health
 
@@ -68,27 +96,25 @@ class Player:
         if keys_pressed[down] and y_allowed[0] <= (self.obj.y + self.VEL_SPACESHIP) <= y_allowed[1]:  # DOWN
             self.obj.y += self.VEL_SPACESHIP
 
-    def shoot(self, color):
-        if len(self.bullets) <= self.MAX_BULLETS:
+    def shoot(self, color, index, bullets):
+        if len([bullet for bullet in bullets if bullet.player == self]) <= MAX_BULLETS:
             obj = pygame.Rect(self.obj.x, self.obj.y + self.obj.height // 2, 10, 5)
-            bullet = Bullet(color, obj, self)
-            self.bullets.append(bullet)
+            bullet = Bullet(color, obj, self, index)
+            #bullets.append(bullet)
             BULLET_FIRE_SOUND.play()
+            return bullet
+
+    def dumps(self) -> DTO:
+        return DTO(self.health, self.obj)
+
+    def loads(self, dto):
+        self.health = dto.health
+        self.obj = dto.obj
+        return self
 
 
-class GameStatus:
-    """this class contains the info about the game status that
-    needs to be shared between client and server"""
-
-    def __init__(self, players):
-        self.players = players
-
-    def update(self, players):
-        self.players = players
-
-    def get(self):
-        return self.players
-
+# max bullets
+MAX_BULLETS = 3
 
 # hits UID
 A_HIT = pygame.USEREVENT + 1  # this is just a UID
@@ -130,14 +156,14 @@ if pygame.mixer.get_init() is not None:
     BULLET_HIT_SOUND = pygame.mixer.Sound(os.path.join("Assets", "Grenade+1.mp3"))
 
 
-def draw_window(players):
+def draw_window(players, bullets):
     """draw all objects"""
     WIN.blit(SPACE, (0, 0))  # background
     pygame.draw.rect(WIN, BLACK, BORDER)  # middle bar
     for player in players:
         player.draw_health(WIN)  # (WIDTH - red_health_text.get_width() -10, 10)
         player.draw(WIN)
-        for bullet in player.bullets:
+        for bullet in bullets:
             bullet.draw(WIN)
     pygame.display.update()  # update the window display
 
@@ -150,9 +176,8 @@ def draw_winner(text):
     pygame.time.delay(5000)
 
 
-def handle_bullets(players):
+def handle_bullets(bullts, plyers):
     """move bullets around"""
-    for bullet in players[0].bullets:
-        bullet.move(players[1], 8, (0, WIDTH))
-    for bullet in players[1].bullets:
-        bullet.move(players[0], -8, (0, WIDTH))
+    for bullet in bullts:
+        bullet.move(8, (0, WIDTH), bullts, plyers)
+    return bullts, plyers
